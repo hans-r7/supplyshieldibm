@@ -39,7 +39,7 @@ const AppSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col py-4 gap-1 px-3">
+        <nav className={cn("flex flex-col px-3", collapsed ? "py-4 gap-2" : "py-4 gap-1")}>
           {navItems.map((item) => {
             const link = (
               <NavLink
