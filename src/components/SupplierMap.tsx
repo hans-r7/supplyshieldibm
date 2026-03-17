@@ -21,7 +21,7 @@ import {
   crisisLogEntries,
   crisisSupplierOverrides,
 } from "@/data/crisisMode";
-import { Ship, Plane, Truck, AlertTriangle, Play, X, Activity } from "lucide-react";
+import { Ship, Plane, Truck, AlertTriangle, Play, X, Activity, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const GEO_URL =
@@ -75,6 +75,7 @@ const SupplierMap = () => {
   );
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
   const [crisisMode, setCrisisMode] = useState(false);
+  const [position, setPosition] = useState({ coordinates: [30, 20] as [number, number], zoom: 1 });
 
   const toggleMode = useCallback((mode: TransportMode) => {
     setActiveModes((prev) => {
@@ -195,6 +196,24 @@ const SupplierMap = () => {
           )}
         </div>
 
+        {/* Zoom Controls */}
+        <div className="absolute bottom-3 left-3 z-30 flex flex-col gap-1 bg-background/80 backdrop-blur-sm rounded-lg p-1 border border-border">
+          <button
+            onClick={() => setPosition((pos) => ({ ...pos, zoom: Math.min(pos.zoom * 1.5, 8) }))}
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            aria-label="Zoom in"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setPosition((pos) => ({ ...pos, zoom: Math.max(pos.zoom / 1.5, 1) }))}
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            aria-label="Zoom out"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+        </div>
+
         {/* Legend */}
         <div className="absolute bottom-3 right-3 z-30 bg-background/80 backdrop-blur-sm rounded-lg p-2.5 border border-border">
           <div className="flex flex-col gap-1.5 text-[10px]">
@@ -223,7 +242,11 @@ const SupplierMap = () => {
           className="w-full"
           style={{ aspectRatio: "2.4 / 1" }}
         >
-          <ZoomableGroup>
+          <ZoomableGroup
+            zoom={position.zoom}
+            center={position.coordinates}
+            onMoveEnd={({ coordinates, zoom }) => setPosition({ coordinates: coordinates as [number, number], zoom })}
+          >
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
                 geographies.map((geo) => (
@@ -258,7 +281,8 @@ const SupplierMap = () => {
                     strokeWidth={1.2}
                     strokeLinecap="round"
                     strokeOpacity={crisisMode ? 0.7 : 0.45}
-                    strokeDasharray={route.mode === "air" ? "4 3" : route.mode === "land" ? "2 2" : "none"}
+                    strokeDasharray={route.mode === "air" ? "4 4" : route.mode === "land" ? "2 2" : "6 4"}
+                    className="animate-flow-line"
                   />
                   <Line
                     from={mid}
@@ -267,7 +291,8 @@ const SupplierMap = () => {
                     strokeWidth={1.2}
                     strokeLinecap="round"
                     strokeOpacity={crisisMode ? 0.7 : 0.45}
-                    strokeDasharray={route.mode === "air" ? "4 3" : route.mode === "land" ? "2 2" : "none"}
+                    strokeDasharray={route.mode === "air" ? "4 4" : route.mode === "land" ? "2 2" : "6 4"}
+                    className="animate-flow-line"
                   />
                 </g>
               );

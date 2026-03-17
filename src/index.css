@@ -137,4 +137,14 @@
     transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
     transition-duration: 300ms;
   }
+
+  @keyframes flowDash {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+
+  .animate-flow-line {
+    animation: flowDash 2s linear infinite;
+  }
 }
