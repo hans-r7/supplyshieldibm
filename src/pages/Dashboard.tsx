@@ -1,5 +1,6 @@
 import SupplierMap from "@/components/SupplierMap";
 import RiskSummaryCards from "@/components/RiskSummaryCards";
+import SupplierMetricsTable from "@/components/SupplierMetricsTable";
 
 const Dashboard = () => {
   return (
@@ -10,6 +11,7 @@ const Dashboard = () => {
       </div>
       <SupplierMap />
       <RiskSummaryCards />
+      <SupplierMetricsTable />
     </div>
   );
 };
