@@ -39,7 +39,7 @@ const AppSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col py-3 gap-0.5 px-2">
+        <nav className="flex flex-col py-4 gap-1 px-3">
           {navItems.map((item) => {
             const link = (
               <NavLink
