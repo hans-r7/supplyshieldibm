@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SupplierProvider } from "@/context/SupplierContext";
 import AppLayout from "./components/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import WeatherRisks from "./pages/WeatherRisks";
@@ -16,20 +17,22 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/weather" element={<WeatherRisks />} />
-            <Route path="/geopolitical" element={<GeopoliticalRisks />} />
-            <Route path="/mitigation" element={<Mitigation />} />
-            <Route path="/agent-log" element={<AgentLog />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <SupplierProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/weather" element={<WeatherRisks />} />
+              <Route path="/geopolitical" element={<GeopoliticalRisks />} />
+              <Route path="/mitigation" element={<Mitigation />} />
+              <Route path="/agent-log" element={<AgentLog />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </SupplierProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
