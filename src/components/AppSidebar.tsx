@@ -1,5 +1,6 @@
 import { Globe, Cloud, AlertTriangle, Shield, Activity } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import TestApiButton from "./TestApiButton";
 
 const navItems = [
   { title: "Dashboard", path: "/", icon: Globe },
@@ -32,8 +33,9 @@ const AppSidebar = () => {
         ))}
       </nav>
 
-      <div className="mt-auto p-4 border-t border-border">
-        <p className="text-[10px] text-muted-foreground font-mono-data uppercase tracking-widest">
+      <div className="mt-auto p-4 border-t border-border flex flex-col gap-2">
+        <TestApiButton />
+        <p className="text-[10px] text-muted-foreground font-mono-data uppercase tracking-widest text-center mt-2">
           IBM watsonx Hackathon
         </p>
       </div>

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { geopoliticalEvents, injectedEvent, GeopoliticalEvent } from "@/data/geopoliticalEvents";
 import { useSuppliers } from "@/context/SupplierContext";
 import { AlertTriangle, Globe, Users, Zap, TrendingUp } from "lucide-react";
+import { useRiskScorer } from "../hooks/useRiskScorer";
+import AgentLog from "./AgentLog";
 
 const severityColor = (s: number) =>
   s > 7 ? "text-risk-critical bg-risk-critical/10" : s >= 4 ? "text-risk-medium bg-risk-medium/10" : "text-risk-low bg-risk-low/10";
@@ -10,16 +12,36 @@ const statusColor = (s: string) =>
   s === "Active" ? "text-risk-critical bg-risk-critical/10" : s === "Monitoring" ? "text-risk-medium bg-risk-medium/10" : "text-risk-low bg-risk-low/10";
 
 const GeopoliticalRisks = () => {
-  const { updateSupplierRisk } = useSuppliers();
+  const { suppliers, updateSupplierRisk } = useSuppliers();
   const [events, setEvents] = useState<GeopoliticalEvent[]>(geopoliticalEvents);
   const [injected, setInjected] = useState(false);
+  const [agentLog, setAgentLog] = useState([]);
 
-  const handleInject = () => {
+  // AddAgentLog helper
+  function addAgentLog(entry) {
+    setAgentLog((prev) => [
+      { ...entry, id: `agent-${Date.now()}` },
+      ...prev,
+    ]);
+  }
+
+  // Risk scorer hook
+  const { runRiskScoringAgent, isScoring, apiStatus } = useRiskScorer(
+    suppliers,
+    updateSupplierRisk,
+    addAgentLog
+  );
+
+  async function handleInjectEvent() {
     if (injected) return;
     setInjected(true);
     setEvents((prev) => [injectedEvent, ...prev]);
-    updateSupplierRisk("tsmc-tw", 10);
-  };
+    // Fire IBM agentic risk scoring pipeline
+    await runRiskScoringAgent(
+      "Taiwan Strait blockade — critical shipping lane closure imminent",
+      "Taiwan"
+    );
+  }
 
   const activeCount = events.filter((e) => e.status !== "Resolved").length;
   const avgSeverity = (events.reduce((a, e) => a + e.severity, 0) / events.length).toFixed(1);
@@ -41,16 +63,16 @@ const GeopoliticalRisks = () => {
           <p className="text-sm text-muted-foreground">Geopolitical event tracking and injection</p>
         </div>
         <button
-          onClick={handleInject}
-          disabled={injected}
+          onClick={handleInjectEvent}
+          disabled={injected || isScoring}
           className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-semibold cascade-transition ${
-            injected
+            injected || isScoring
               ? "bg-muted text-muted-foreground cursor-not-allowed"
               : "bg-destructive text-destructive-foreground hover:brightness-110 active:scale-95"
           }`}
         >
           <Zap className="h-4 w-4" />
-          {injected ? "Event Injected" : "Inject Event"}
+          {isScoring ? "Agents running..." : injected ? "Event Injected" : "Inject Event"}
         </button>
       </div>
 
@@ -107,6 +129,19 @@ const GeopoliticalRisks = () => {
           </tbody>
         </table>
       </div>
+      {/* API call status feedback */}
+      {apiStatus.status !== "idle" && (
+        <div className={`my-4 p-3 rounded font-semibold text-sm ${
+          apiStatus.status === "success"
+            ? "bg-green-100 text-green-800 border border-green-300"
+            : apiStatus.status === "error"
+            ? "bg-red-100 text-red-800 border border-red-300"
+            : "bg-blue-100 text-blue-800 border border-blue-300"
+        }`}>
+          {apiStatus.message}
+        </div>
+      )}
+      <AgentLog entries={agentLog} />
     </div>
   );
 };

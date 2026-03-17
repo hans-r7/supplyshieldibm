@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
+
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -11,8 +11,20 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/api/ibm-iam": {
+        target: "https://iam.cloud.ibm.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/ibm-iam/, ""),
+      },
+      "/api/watsonx": {
+        target: "https://us-south.ml.cloud.ibm.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/watsonx/, ""),
+      },
+    },
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

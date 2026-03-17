@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Activity } from "lucide-react";
 
 interface LogEntry {
@@ -23,6 +23,7 @@ const agentBadge: Record<string, string> = {
   "Escalation Agent": "text-risk-critical bg-risk-critical/10",
 };
 
+// Static demo entries (not highlighted)
 const logEntries: LogEntry[] = [
   { id: "l-01", timestamp: "14:32:01", agent: "Escalation Agent", title: "Critical alert sent to procurement team", reasoning: "TSMC Taiwan risk score reached 10, human review required" },
   { id: "l-02", timestamp: "14:31:45", agent: "Mitigation Advisor", title: "Generated 3 mitigation actions for TSMC Taiwan", reasoning: "Alternative suppliers ranked by capacity and lead time" },
@@ -36,8 +37,30 @@ const logEntries: LogEntry[] = [
   { id: "l-10", timestamp: "13:15:33", agent: "Risk Scorer", title: "Routine scan completed for 8 suppliers", reasoning: "All supplier scores recalculated against latest signal feeds" },
 ];
 
-const AgentLog = () => {
-  const [actionCount, setActionCount] = useState(logEntries.length);
+const AgentLog = ({ entries = [] }) => {
+  const [actionCount, setActionCount] = useState((entries.length || 0) + logEntries.length);
+  const [highlighted, setHighlighted] = useState({});
+  const prevEntriesRef = useRef(entries);
+
+  // Highlight new entries for 3 seconds
+  useEffect(() => {
+    if (entries.length > prevEntriesRef.current.length) {
+      const newIds = entries.slice(0, entries.length - prevEntriesRef.current.length).map(e => e.id);
+      setHighlighted((prev) => {
+        const next = { ...prev };
+        newIds.forEach(id => { next[id] = true; });
+        return next;
+      });
+      setTimeout(() => {
+        setHighlighted((prev) => {
+          const next = { ...prev };
+          newIds.forEach(id => { delete next[id]; });
+          return next;
+        });
+      }, 3000);
+    }
+    prevEntriesRef.current = entries;
+  }, [entries]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,6 +68,9 @@ const AgentLog = () => {
     }, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Merge static and dynamic entries
+  const allEntries = [...(entries || []), ...logEntries];
 
   return (
     <div className="space-y-6">
@@ -66,8 +92,11 @@ const AgentLog = () => {
         <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
 
         <div className="space-y-1">
-          {logEntries.map((entry) => (
-            <div key={entry.id} className="relative flex items-start gap-4 py-3">
+          {allEntries.map((entry) => (
+            <div
+              key={entry.id}
+              className={`relative flex items-start gap-4 py-3 transition-all duration-700 ${highlighted[entry.id] ? "ring-2 ring-primary/60 bg-primary/10 animate-pulse" : ""}`}
+            >
               {/* Dot */}
               <div className={`absolute left-[-21px] top-[18px] h-2.5 w-2.5 rounded-full ${agentColor[entry.agent]} ring-2 ring-background`} />
 
@@ -78,7 +107,7 @@ const AgentLog = () => {
                     {entry.agent}
                   </span>
                 </div>
-                <p className="text-sm text-foreground font-medium">{entry.title}</p>
+                <p className="text-sm text-foreground font-medium">{entry.title || entry.action}</p>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{entry.reasoning}</p>
               </div>
             </div>
