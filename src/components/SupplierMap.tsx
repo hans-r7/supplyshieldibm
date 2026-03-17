@@ -37,12 +37,11 @@ const SupplierMap = () => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill="hsl(222 30% 18%)"
-                  stroke="hsl(222 30% 12%)"
+                  className="fill-muted stroke-border"
                   strokeWidth={0.5}
                   style={{
                     default: { outline: "none" },
-                    hover: { fill: "hsl(222 30% 22%)", outline: "none" },
+                    hover: { outline: "none", opacity: 0.8 },
                     pressed: { outline: "none" },
                   }}
                 />
