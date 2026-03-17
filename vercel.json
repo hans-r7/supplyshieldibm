@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/ibm-iam/:match*",
+      "destination": "https://iam.cloud.ibm.com/:match*"
+    },
+    {
+      "source": "/api/watsonx/:match*",
+      "destination": "https://us-south.ml.cloud.ibm.com/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
