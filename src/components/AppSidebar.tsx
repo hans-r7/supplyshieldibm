@@ -48,7 +48,7 @@ const AppSidebar = () => {
                 className={({ isActive }) =>
                   cn(
                     "flex items-center text-sm rounded-md transition-colors duration-150",
-                    collapsed ? "h-9 w-9 justify-center mx-auto" : "gap-3 px-3 py-2",
+                    collapsed ? "h-9 w-9 justify-center mx-auto" : "gap-3 px-3 py-2.5",
                     isActive
                       ? "bg-primary/10 text-primary font-medium shadow-sm shadow-primary/5"
                       : "text-muted-foreground hover:text-foreground hover:bg-surface-overlay/60"
