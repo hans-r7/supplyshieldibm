@@ -1,4 +1,4 @@
-import { Globe, Cloud, AlertTriangle, Shield, Activity, ChevronLeft, ChevronRight } from "lucide-react";
+import { Globe, Cloud, AlertTriangle, Shield, Activity, PanelLeftClose, PanelLeft } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import TestApiButton from "./TestApiButton";
@@ -20,55 +20,70 @@ const AppSidebar = () => {
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "bg-nav border-r border-border flex flex-col shrink-0 transition-all duration-200 ease-linear relative",
-          collapsed ? "w-[56px]" : "w-[220px]"
+          "bg-nav border-r border-border flex flex-col shrink-0 transition-[width] duration-200 ease-linear overflow-hidden",
+          collapsed ? "w-[52px]" : "w-[220px]"
         )}
       >
-        <button
-          onClick={() => setCollapsed((c) => !c)}
-          className="absolute -right-3 top-5 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-nav text-muted-foreground hover:text-foreground hover:bg-surface-overlay transition-colors"
-        >
-          {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
-        </button>
+        {/* Collapse toggle */}
+        <div className={cn(
+          "flex items-center border-b border-border h-10 shrink-0",
+          collapsed ? "justify-center px-0" : "justify-end px-2"
+        )}>
+          <button
+            onClick={() => setCollapsed((c) => !c)}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-overlay transition-colors"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+        </div>
 
-        <nav className="flex flex-col py-4 gap-1">
-          {navItems.map((item) => (
-            <Tooltip key={item.path}>
-              <TooltipTrigger asChild>
-                <NavLink
-                  to={item.path}
-                  end={item.path === "/"}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-3 text-sm transition-all duration-200 cascade-transition",
-                      collapsed ? "px-0 py-2.5 justify-center" : "px-5 py-2.5",
-                      isActive
-                        ? "border-l-2 border-primary bg-surface-overlay text-foreground font-medium"
-                        : "border-l-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-overlay/50"
-                    )
-                  }
-                >
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && <span className="truncate">{item.title}</span>}
-                </NavLink>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right" className="text-xs">
-                  {item.title}
-                </TooltipContent>
-              )}
-            </Tooltip>
-          ))}
+        {/* Navigation */}
+        <nav className="flex flex-col py-3 gap-0.5 px-2">
+          {navItems.map((item) => {
+            const link = (
+              <NavLink
+                to={item.path}
+                end={item.path === "/"}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center text-sm rounded-md transition-colors duration-150",
+                    collapsed ? "h-9 w-9 justify-center mx-auto" : "gap-3 px-3 py-2",
+                    isActive
+                      ? "bg-primary/10 text-primary font-medium shadow-sm shadow-primary/5"
+                      : "text-muted-foreground hover:text-foreground hover:bg-surface-overlay/60"
+                  )
+                }
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                {!collapsed && <span className="truncate">{item.title}</span>}
+              </NavLink>
+            );
+
+            if (collapsed) {
+              return (
+                <Tooltip key={item.path}>
+                  <TooltipTrigger asChild>{link}</TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={8} className="text-xs font-medium">
+                    {item.title}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
+
+            return <div key={item.path}>{link}</div>;
+          })}
         </nav>
 
+        {/* Footer */}
         <div className={cn(
-          "mt-auto border-t border-border flex flex-col gap-2 transition-all duration-200",
-          collapsed ? "p-2 items-center" : "p-4"
+          "mt-auto border-t border-border flex flex-col transition-[padding] duration-200",
+          collapsed ? "p-2 items-center" : "p-3 gap-2"
         )}>
           {!collapsed && (
             <>
               <TestApiButton />
-              <p className="text-[10px] text-muted-foreground font-mono-data uppercase tracking-widest text-center mt-2">
+              <p className="text-[10px] text-muted-foreground font-mono-data uppercase tracking-widest text-center mt-1">
                 IBM watsonx Hackathon
               </p>
             </>
