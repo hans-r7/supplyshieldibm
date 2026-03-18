@@ -1,5 +1,5 @@
 import { Globe, Cloud, AlertTriangle, Shield, Activity, PanelLeftClose, PanelLeft } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import TestApiButton from "./TestApiButton";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ const navItems = [
 
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -39,39 +40,40 @@ const AppSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className={cn("flex flex-col px-3", collapsed ? "py-4 gap-2" : "py-4 gap-1")}>
+        <nav className={cn("flex flex-col py-4 w-full", collapsed ? "gap-8 px-4 py-5" : "gap-1 px-3")}>
           {navItems.map((item) => {
+            const isActive = item.path === "/" ? location.pathname === "/" : location.pathname.startsWith(item.path);
             const link = (
               <NavLink
                 to={item.path}
                 end={item.path === "/"}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center text-sm rounded-md transition-colors duration-150",
-                    collapsed ? "h-10 w-10 justify-center mx-auto" : "gap-3 px-3 py-2.5",
-                    isActive
-                      ? "bg-primary/10 text-primary font-medium shadow-sm shadow-primary/5"
-                      : "text-muted-foreground hover:text-foreground hover:bg-surface-overlay/60"
-                  )
-                }
+                className={cn(
+                  "flex items-center text-sm rounded-md transition-colors duration-150 h-10 w-full",
+                  collapsed ? "justify-center px-0 mx-auto" : "justify-start gap-3 px-3",
+                  isActive
+                    ? cn("text-primary font-medium", !collapsed && "bg-primary/10 shadow-sm shadow-primary/5")
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-overlay/60"
+                )}
               >
                 <item.icon className="h-4 w-4 shrink-0" />
                 {!collapsed && <span className="truncate">{item.title}</span>}
               </NavLink>
             );
 
-            if (collapsed) {
-              return (
-                <Tooltip key={item.path}>
-                  <TooltipTrigger asChild>{link}</TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={8} className="text-xs font-medium">
-                    {item.title}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            }
-
-            return <div key={item.path}>{link}</div>;
+            return (
+              <div className="flex w-full" key={item.path}>
+                {collapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>{link}</TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={8} className="text-xs font-medium">
+                      {item.title}
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  link
+                )}
+              </div>
+            );
           })}
         </nav>
 
