@@ -40,14 +40,21 @@ const agentBadge: Record<string, string> = {
   "Escalation Agent": "text-risk-critical bg-risk-critical/10",
 };
 
-// Helper: compute a curved midpoint for arc lines
+// Helper: compute a curved midpoint for arc lines safely across the date line
 function arcMidpoint(
   from: [number, number],
   to: [number, number]
 ): [number, number] {
-  const midLng = (from[0] + to[0]) / 2;
+  let dx = to[0] - from[0];
+  if (dx > 180) dx -= 360;
+  else if (dx < -180) dx += 360;
+  
+  let midLng = from[0] + dx / 2;
+  // Normalize midLng to [-180, 180]
+  if (midLng > 180) midLng -= 360;
+  else if (midLng < -180) midLng += 360;
+
   const midLat = (from[1] + to[1]) / 2;
-  const dx = to[0] - from[0];
   const dy = to[1] - from[1];
   const dist = Math.sqrt(dx * dx + dy * dy);
   const offset = dist * 0.15;
@@ -230,7 +237,7 @@ const SupplierMap = () => {
               <span className="text-muted-foreground">Low (1-4)</span>
             </div>
             <div className="flex items-center gap-2 mt-1 pt-1 border-t border-border">
-              <span className="h-0.5 w-4 bg-risk-critical rounded" />
+              <span className="h-1.5 w-1.5 bg-risk-critical rotate-45 transform mx-1" />
               <span className="text-muted-foreground">Chokepoint</span>
             </div>
           </div>
@@ -270,31 +277,19 @@ const SupplierMap = () => {
 
             {/* Route arcs */}
             {filteredRoutes.map((route) => {
-              const mid = arcMidpoint(route.from, route.to);
               const color = getRouteColor(route);
               return (
-                <g key={route.id}>
-                  <Line
-                    from={route.from}
-                    to={mid}
-                    stroke={color}
-                    strokeWidth={1.2}
-                    strokeLinecap="round"
-                    strokeOpacity={crisisMode ? 0.7 : 0.45}
-                    strokeDasharray={route.mode === "air" ? "4 4" : route.mode === "land" ? "2 2" : "6 4"}
-                    className="animate-flow-line"
-                  />
-                  <Line
-                    from={mid}
-                    to={route.to}
-                    stroke={color}
-                    strokeWidth={1.2}
-                    strokeLinecap="round"
-                    strokeOpacity={crisisMode ? 0.7 : 0.45}
-                    strokeDasharray={route.mode === "air" ? "4 4" : route.mode === "land" ? "2 2" : "6 4"}
-                    className="animate-flow-line"
-                  />
-                </g>
+                <Line
+                  key={route.id}
+                  from={route.from}
+                  to={route.to}
+                  stroke={color}
+                  strokeWidth={1.2}
+                  strokeLinecap="round"
+                  strokeOpacity={crisisMode ? 0.7 : 0.45}
+                  strokeDasharray={route.mode === "air" ? "4 4" : route.mode === "land" ? "2 2" : "6 4"}
+                  className="animate-flow-line"
+                />
               );
             })}
 

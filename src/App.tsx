@@ -11,6 +11,7 @@ import GeopoliticalRisks from "./pages/GeopoliticalRisks";
 import Mitigation from "./pages/Mitigation";
 import AgentLog from "./pages/AgentLog";
 import NotFound from "./pages/NotFound";
+import Escalation from "./pages/Escalation";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/geopolitical" element={<GeopoliticalRisks />} />
               <Route path="/mitigation" element={<Mitigation />} />
               <Route path="/agent-log" element={<AgentLog />} />
+              <Route path="/escalation" element={<Escalation />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

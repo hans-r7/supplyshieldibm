@@ -5,6 +5,7 @@ export interface Supplier {
   component: string;
   coordinates: [number, number]; // [lat, lng]
   riskScore: number;
+  escalationStatus?: "pending" | "approved" | "dismissed";
 }
 
 export const suppliers: Supplier[] = [

@@ -1,4 +1,4 @@
-import { Globe, Cloud, AlertTriangle, Shield, Activity, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Globe, Cloud, AlertTriangle, Shield, Activity, PanelLeftClose, PanelLeft, ShieldAlert } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import TestApiButton from "./TestApiButton";
@@ -11,6 +11,7 @@ const navItems = [
   { title: "Geopolitical Risks", path: "/geopolitical", icon: AlertTriangle },
   { title: "Mitigation", path: "/mitigation", icon: Shield },
   { title: "Agent Log", path: "/agent-log", icon: Activity },
+  { title: "Escalation", path: "/escalation", icon: ShieldAlert },
 ];
 
 const AppSidebar = () => {

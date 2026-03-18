@@ -109,7 +109,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "sr-tsmc-us",
     from: [121.5, 25.0],
-    to: [-118.2, 33.9],
+    to: [-112.0, 33.4], // TSMC AZ
     mode: "sea",
     label: "TSMC → US West Coast",
     riskScore: 8,
@@ -127,7 +127,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "sr-samsung-us",
     from: [127.0, 37.5],
-    to: [-118.2, 33.9],
+    to: [-112.0, 33.4], // TSMC AZ
     mode: "sea",
     label: "Samsung → US West Coast",
     riskScore: 4,
@@ -136,7 +136,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "sr-unisem-eu",
     from: [101.6, 3.1],
-    to: [3.7, 51.2],
+    to: [10.4, 51.1], // Infineon DE
     mode: "sea",
     label: "Unisem → Europe",
     riskScore: 6,
@@ -164,7 +164,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "ar-samsung-us",
     from: [127.0, 37.5],
-    to: [-97.0, 32.7],
+    to: [-112.0, 33.4], // TSMC AZ
     mode: "air",
     label: "Samsung → US (express)",
     riskScore: 3,
@@ -173,7 +173,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "ar-renesas-eu",
     from: [139.7, 35.6],
-    to: [11.8, 48.1],
+    to: [10.4, 51.1], // Infineon DE
     mode: "air",
     label: "Renesas → Germany (auto MCUs)",
     riskScore: 2,
@@ -192,7 +192,7 @@ export const supplyRoutes: SupplyRoute[] = [
   {
     id: "lr-us-mx",
     from: [-112.0, 33.4],
-    to: [-106.4, 31.7],
+    to: [-106.0, 31.8], // US-Mexico Border
     mode: "land",
     label: "TSMC AZ → Mexico (assembly)",
     riskScore: 3,
