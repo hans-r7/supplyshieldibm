@@ -40,7 +40,7 @@ const AppSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className={cn("flex flex-col py-4 w-full", collapsed ? "gap-8 px-4 py-5" : "gap-1 px-3")}>
+        <nav className={cn("flex flex-col py-4 w-full", collapsed ? "gap-3 px-4 py-5" : "gap-1 px-3")}>
           {navItems.map((item) => {
             const isActive = item.path === "/" ? location.pathname === "/" : location.pathname.startsWith(item.path);
             const link = (
